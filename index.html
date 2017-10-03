@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Potential TQI Score</title>
+    <link rel="shortcut icon" href="https://www.cdn.kony.com/sites/all/themes/kony/favicon.ico" type="image/vnd.microsoft.icon">
+    <link rel="stylesheet" href="css/bulma.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script> -->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript" src="js/smooothscroll.js">
+
+  </script>
+    <script type="text/javascript" src="js/jquery.animateNumber.min.js">
+
+  </script>
+  </head>
+  <body>
+<div class="pageloader" id="pageloader">
+</div>
+<section class="hero is-fullheight is-primary" id="home">
+<div class="hero-body">
+<div class="container">
+  <div class="columns">
+  <div class="column is-two-thirds">
+    <h1 class="title">
+      TQI Potential Score
+    </h1>
+    <h2 class="subtitle">
+      Tool that <strong> estimates </strong> your Ticket Quality Index<br><br>
+      Powered by CSE-BDE
+    </h2>
+  </div>
+
+  <div class="column is-primary">
+    <div class="box">
+      <div class="field">
+      <h1 class="is-size-5">  Check TQI for date range </h1>
+  <label class="label">From Date</label>
+  <div class="control">
+    <input class="input" type="date" placeholder="Text input" id="fromDate">
+  </div>
+</div>
+<div class="field">
+<label class="label">To Date</label>
+<div class="control">
+<input class="input" type="date" placeholder="Text input" id="toDate">
+</div>
+</div>
+
+
+<div class="control">
+   <a class="button is-info" href="#TQI" onclick="checkingDatebeforeCallingAPI()">Submit</a>
+ </div>
+<div class="is-divider" data-content="OR"></div>
+<h1 class="is-size-5">  Check TQI for Ticket Id </h1>
+<div class="field">
+
+<label class="label">Ticket No</label>
+
+<div class="control">
+<input class="input" type="number" placeholder="Ticket Id" id="ticketNo" >
+</div>
+</div>
+
+<div class="control">
+   <a class="button is-info" href="#TQI" onclick="checkTicketBeforeCallingApi()">Submit</a>
+ </div>
+    </div>
+
+
+
+  </div>
+</div>
+
+
+</div>
+
+</div>
+</section>
+<div class="columns" id="gaps">
+<div class="column is-three-quarters"></div>
+<div class="column"></div>
+<div class="column"></div>
+</div>
+<div class="container is-fluid">
+
+
+<div class="tile is-ancestor" id="TQI" style="display:none">
+  <div class="tile is-parent">
+    <article class="tile is-child notification is-light box">
+      <div class="content">
+        <p class="title">Number of tags</p>
+        <p class="subtitle">The times the tags have been repeated</p>
+        <div class="content" id="canvascontent">
+          <canvas id="myChart"></canvas>
+
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="tile is-vertical is-6">
+
+    <div class="tile">
+      <div class="tile is-parent">
+        <article class="tile is-child notification is-dark box">
+          <p class="title">Potential TQI </p>
+          <p class="subtitle" id="Tid"></p>
+          <div class="content">
+            <h1 class="has-text-centered is-size-1" style="color:#fff" id="ptqi"> 0 </h1>
+              <p class="subtitle">Basic Information :</p>
+              <p id="basicInfo"></p>
+          </div>
+
+        </article>
+      </div>
+      <div class="tile is-parent is-vertical">
+        <article class="tile is-child notification is-primary box" id="radiobuttons">
+          <p class="title">Platform</p>
+          <p class="subtitle">Select your platform</p>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="rsvp">
+              MADP
+            </label>
+            <label class="radio">
+              <input type="radio" name="rsvp">
+              MF
+            </label>
+            <label class="radio">
+              <input type="radio" name="rsvp">
+              Both
+            </label>
+          </div>
+        </article>
+        <article class="tile is-child notification is-warning box">
+          <p class="title">Info</p>
+          <p class="subtitle">Definition of tags</p>
+          <div class="control">
+            <button class="button is-primary box" onclick="modalfunction()">Get Info</button>
+          </div>
+        </article>
+      </div>
+
+    </div>
+    <div class="tile is-parent">
+      <article class="tile is-child notification is-danger box">
+        <p class="title">Missing Tags</p>
+        <p class="subtitle">All the tags you have missed</p>
+        <div class="content">
+          <div class="tags" id="missingTags">
+
+          </div>
+          <!-- Content -->
+        </div>
+      </article>
+    </div>
+  </div>
+
+</div>
+</div>
+<div class="modal" id='modal'>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Definition of tags</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <ul>
+        <li> #Severity Justification# - Document as why chosen severity is appropriate</li>
+        <li>#Problem Statement# - To document Problem Description</li>
+        <li>#Problem Verification#  - To document how the problem was verified</li>
+<li> #Question(s)#  - To document Question(s)</li>
+<li> #Root Cause# -  To document root cause of the problem</li>
+ <li>#RCA Justification# - To document how this root cause resulted in problem</li>
+<li> #Data Collected# - To document data collected and inferences</li>
+<li> #Update# - To document non-technical / progress updates (with ETA)</li>
+<li> #Customer Discussion#- To summarise WebEx / Phone sessions</li>
+<li> #Action Plan# - To document action for customers (to share log, sample app etc.,)</li>
+<li> #Solution#  #Solution Plan# - To document resolution and step-by-step instructions</li>
+<li> #Answer# - To document answer(s) with references</li>
+<li> #Knowlede Content# - To refer KB article, if not WHY (both unpub)</li>
+
+      </ul>
+    </section>
+
+  </div>
+</div>
+<div class="modal" id="modal2">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title" id="modal-card-title">Tickets and comments that has the tag</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body" id="chart-modal-content">
+      <!-- Content ... -->
+      <ul id="chart-modal-info">
+
+      </ul>
+    </section>
+    <footer class="modal-card-foot">
+
+    </footer>
+  </div>
+</div>
+<footer class="footer is-small">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        Powered by<strong> CSE-BDE Team </strong> <br> Designed and developed with ❤ by <strong> Akhil Sai Ram </strong>
+      <p>
+        <a class="button is-primary" href="#home">Go to Top
+          <i class="fa fa-home" aria-hidden="true"></i>
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>
+<script type="text/javascript" src="js/restcall.js">
+
+</script>
+<script type="text/javascript" src="js/chartprep.js">
+
+</script>
+<script type="text/javascript" src="js/tqiscore.js">
+
+</script>
+<script type="text/javascript" src="js/datechecker.js">
+
+</script>
+<script type="text/javascript" src="js/ticketChecker.js">
+
+</script>
+<script type="text/javascript" src="js/commentChecker.js">
+
+</script>
+<script type="text/javascript" src="js/scorecaluclator.js">
+
+</script>
+<script type="text/javascript" src="js/amravivarajar.js">
+
+</script>
+  </body>
+
+</html>
